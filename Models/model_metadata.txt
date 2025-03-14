@@ -1,0 +1,6 @@
+model_name: RandomForest
+scaler: MinMaxScaler
+accuracy: 0.7402597402597403
+roc_auc: 0.8196296296296297
+parameters: {'max_depth': None, 'n_estimators': 200}
+feature_names: ['Pregnancies', 'Glucose', 'BloodPressure', 'SkinThickness', 'Insulin', 'BMI', 'DiabetesPedigreeFunction', 'Age']
