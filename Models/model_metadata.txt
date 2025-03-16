@@ -1,6 +1,14 @@
-model_name: RandomForest
-scaler: MinMaxScaler
-accuracy: 0.7402597402597403
-roc_auc: 0.8196296296296297
-parameters: {'max_depth': None, 'n_estimators': 200}
-feature_names: ['Pregnancies', 'Glucose', 'BloodPressure', 'SkinThickness', 'Insulin', 'BMI', 'DiabetesPedigreeFunction', 'Age']
+model_name: RandomForest with StandardScaler
+scaler: StandardScaler
+accuracy: 0.7467532467532467
+roc_auc: 0.8337037037037036
+parameters:
+  max_depth: 20
+  n_estimators: 200
+feature_names: ['Pregnancies', 'Glucose', 'BloodPressure', 'SkinThickness', 'Insulin', 'BMI', 'DiabetesPedigreeFunction', 'Age', 'BMI_Category', 'Age_Group', 'Glucose_Category', 'BMI_x_Age', 'Glucose_x_Insulin', 'Insulin_Log', 'SkinThickness_Log', 'Had_Pregnancy']
+training_date: 2025-03-16 09:11:30
+preprocessing:
+  imputation: KNN Imputer + Simple Imputer
+  outlier_handling: Winsorization (IQR method)
+  class_imbalance: SMOTE
+  feature_engineering: ['BMI_Category', 'Age_Group', 'Glucose_Category', 'BMI_x_Age', 'Glucose_x_Insulin', 'Insulin_Log', 'SkinThickness_Log', 'Had_Pregnancy']
