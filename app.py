@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request
 import pandas as pd
 import numpy as np
 import pickle
@@ -96,60 +96,8 @@ def predict():
             'probability': probability_percent,
             'features': base_data  # Only store base features in result
         }
-        
-        # Save prediction to history (only base features)
-        save_prediction(base_data, prediction, probability)
     
     return render_template('predict.html', result=result, feature_names=base_features)
-
-@app.route('/report')
-def report():
-    # Load prediction history
-    history = []
-    if os.path.exists('prediction_history.csv'):
-        history = pd.read_csv('prediction_history.csv')
-        history = history.to_dict('records')
-    
-    # Calculate statistics
-    stats = calculate_statistics()
-    
-    return render_template('diabetes-report.html', history=history, stats=stats)
-
-def save_prediction(features, prediction, probability):
-    """Save prediction to CSV file"""
-    # Create a record
-    features['prediction'] = 'Positive' if prediction == 1 else 'Negative'
-    features['probability'] = round(probability * 100, 2)
-    features['timestamp'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    
-    # Create DataFrame
-    df = pd.DataFrame([features])
-    
-    # Append to CSV
-    if os.path.exists('prediction_history.csv'):
-        df.to_csv('prediction_history.csv', mode='a', header=False, index=False)
-    else:
-        df.to_csv('prediction_history.csv', index=False)
-
-def calculate_statistics():
-    """Calculate statistics from prediction history"""
-    stats = {
-        'total_predictions': 0,
-        'positive_count': 0,
-        'negative_count': 0,
-        'avg_probability': 0,
-        'high_risk_count': 0  # probability > 70%
-    }
-    
-    if os.path.exists('prediction_history.csv'):
-        df = pd.read_csv('prediction_history.csv')
-        stats['total_predictions'] = len(df)
-        stats['positive_count'] = len(df[df['prediction'] == 'Positive'])
-        stats['negative_count'] = len(df[df['prediction'] == 'Negative'])
-        stats['avg_probability'] = round(df['probability'].mean(), 2)
-        stats['high_risk_count'] = len(df[df['probability'] > 70])
-    
-    return stats
 
 if __name__ == '__main__':
     app.run(debug=True)
