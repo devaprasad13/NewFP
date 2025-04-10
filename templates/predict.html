@@ -5,183 +5,580 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Predict Diabetes</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3a0ca3;
+            --dark-color: #212529;
+            --light-color: #f8f9fa;
+            --accent-color: #7209b7;
+            --success-color: #4cc9f0;
+            --warning-color: #f72585;
+            --positive-color: #51cf66;
+            --negative-color: #ff6b6b;
+        }
+        
         body {
-            background-color: #f8f9fa;
+            background-color: var(--light-color);
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
             padding-bottom: 50px;
         }
-        .prediction-card {
-            border: none;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-            overflow: hidden;
-            margin-top: 30px;
+        
+        .navbar {
+            padding: 15px 0;
+            transition: all 0.3s ease;
+            background-color: rgba(33, 37, 41, 0.4) !important;
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
-        .prediction-header {
-            padding: 20px;
-            font-weight: bold;
+        
+        .navbar.scrolled {
+            background-color: rgba(33, 37, 41, 0.85) !important;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            animation: slideDown 0.5s ease forwards;
         }
-        .positive {
-            background-color: #ff6b6b;
-            color: white;
+        
+        @keyframes slideDown {
+            from { transform: translateY(-10px); opacity: 0.8; }
+            to { transform: translateY(0); opacity: 1; }
         }
-        .negative {
-            background-color: #51cf66;
-            color: white;
-        }
-        .prediction-body {
-            padding: 20px;
-        }
-        .probability-bar {
-            height: 10px;
-            border-radius: 5px;
-            margin: 10px 0;
-            background-color: #e9ecef;
-        }
-        .probability-value {
-            height: 100%;
-            background: linear-gradient(90deg, #1ec997 0%, #ffc107 50%, #ff6b6b 100%);
-            border-radius: 5px;
-        }
-        .form-label {
-            font-weight: 500;
-        }
-        .section-title {
-            margin-bottom: 30px;
+        
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
             position: relative;
-            padding-bottom: 10px;
+            overflow: hidden;
         }
-        .section-title:after {
+        
+        .navbar-brand i {
+            display: inline-block;
+            transition: transform 0.5s ease;
+        }
+        
+        .navbar-brand:hover i {
+            transform: scale(1.2) rotate(10deg);
+        }
+        
+        .nav-link {
+            font-weight: 500;
+            margin: 0 15px;
+            position: relative;
+            color: white !important;
+            opacity: 0.9;
+            transition: all 0.3s ease;
+            padding: 8px 0;
+        }
+        
+        .nav-link:hover {
+            opacity: 1;
+            transform: translateY(-2px);
+        }
+        
+        .nav-link::after {
             content: '';
             position: absolute;
             bottom: 0;
             left: 0;
-            width: 50px;
-            height: 3px;
-            background-color: #0d6efd;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+        
+        .nav-link:hover::after,
+        .nav-link.active::after {
+            width: 100%;
+        }
+        
+        /* Remove page-header styles and add content-header styles */
+        .content-header {
+            padding-top: 120px;
+            padding-bottom: 40px;
+            background-color: var(--light-color);
+            position: relative;
+        }
+        
+        .content-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(67, 97, 238, 0.05) 0%, rgba(58, 12, 163, 0.05) 100%);
+            z-index: -1;
+        }
+        
+        .content-title {
+            color: var(--dark-color);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .content-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary-color), var(--accent-color));
+            border-radius: 2px;
+        }
+        
+        .page-header {
+            background: linear-gradient(135deg, var(--secondary-color) 0%, var(--primary-color) 100%);
+            color: white;
+            padding: 120px 0 60px;
+            margin-bottom: 60px;
+            position: relative;
+            overflow: hidden;
+            clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
+        }
+        
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,0 L100,0 L100,100 Z" fill="rgba(255, 255, 255, 0.1)"/></svg>');
+            background-size: cover;
+        }
+        
+        .prediction-card {
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin-top: 30px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .prediction-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .prediction-header {
+            padding: 25px;
+            font-weight: bold;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .positive {
+            background: linear-gradient(135deg, var(--negative-color) 0%, #ff8a8a 100%);
+            color: white;
+        }
+        
+        .negative {
+            background: linear-gradient(135deg, var(--positive-color) 0%, #8be69b 100%);
+            color: white;
+        }
+        
+        .prediction-body {
+            padding: 25px;
+        }
+        
+        .probability-bar {
+            height: 12px;
+            border-radius: 6px;
+            margin: 15px 0;
+            background-color: #e9ecef;
+            overflow: hidden;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .probability-value {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success-color) 0%, #ffc107 50%, var(--negative-color) 100%);
+            border-radius: 6px;
+            transition: width 1s ease-in-out;
+        }
+        
+        .form-label {
+            font-weight: 500;
+            color: var(--dark-color);
+            margin-bottom: 8px;
+        }
+        
+        .form-control {
+            border-radius: 10px;
+            padding: 12px 15px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+            border-color: var(--primary-color);
+        }
+        
+        .section-title {
+            font-weight: 700;
+            margin-bottom: 50px;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary-color), var(--accent-color));
+            border-radius: 2px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(to right, var(--primary-color), var(--accent-color));
+            border: none;
+            border-radius: 30px;
+            padding: 14px 34px;
+            font-weight: 600;
+            transition: all 0.4s ease;
+            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.4);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right, var(--accent-color), var(--primary-color));
+            transition: all 0.4s ease;
+            z-index: -1;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(67, 97, 238, 0.5);
+        }
+        
+        .btn-primary:hover::before {
+            left: 0;
+        }
+        
+        .btn-outline-secondary {
+            border-radius: 30px;
+            padding: 10px 25px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 2px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-outline-secondary:hover {
+            background-color: var(--light-color);
+            border-color: var(--dark-color);
+            transform: translateY(-3px);
+        }
+        
+        .card {
+            border: none;
+            border-radius: 16px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow: hidden;
+        }
+        
+        .card-title {
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+        
+        .risk-badge {
+            padding: 8px 15px;
+            border-radius: 30px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+        
+        .risk-low {
+            background-color: rgba(81, 207, 102, 0.15);
+            color: #2b9348;
+        }
+        
+        .risk-medium {
+            background-color: rgba(255, 193, 7, 0.15);
+            color: #e85d04;
+        }
+        
+        .risk-high {
+            background-color: rgba(255, 107, 107, 0.15);
+            color: #d00000;
+        }
+        
+        .table {
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .table td {
+            padding: 12px 15px;
+            border-color: rgba(0, 0, 0, 0.05);
+        }
+        
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+        
+        @keyframes floating {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .animate-in {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.6s ease forwards;
+        }
+        
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .delay-1 {
+            animation-delay: 0.1s;
+        }
+        
+        .delay-2 {
+            animation-delay: 0.2s;
+        }
+        
+        .delay-3 {
+            animation-delay: 0.3s;
         }
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
-            <a class="navbar-brand" href="/">Diabetes Predictor</a>
+            <a class="navbar-brand animate__animated animate__fadeIn" href="/">
+                <i class="fas fa-heartbeat me-2"></i>Diabetes Predictor
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="/">Home</a>
+                        <a class="nav-link animate__animated animate__fadeIn" href="/">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" href="/predict">Predict</a>
+                        <a class="nav-link active animate__animated animate__fadeIn" href="/predict">Predict</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/report">Reports</a>
+                        <a class="nav-link animate__animated animate__fadeIn" href="/#features">Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link animate__animated animate__fadeIn" href="/#how-it-works">How It Works</a>
                     </li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <div class="container mt-5">
-        <h1 class="section-title">Diabetes Risk Prediction</h1>
+    <div class="content-header">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8">
+                    <h2 class="content-title animate__animated animate__fadeIn">Diabetes Risk Assessment</h2>
+                    <p class="lead text-muted mb-0 animate__animated animate__fadeIn">Enter your health metrics to get an instant prediction of your diabetes risk.</p>
+                </div>
+                <div class="col-lg-4 d-none d-lg-flex justify-content-end align-items-center">
+                    <div class="text-end">
+                        <i class="fas fa-stethoscope text-primary floating" style="font-size: 3rem; opacity: 0.2;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <div class="container">
         <div class="row">
-            <div class="col-lg-6">
-                <div class="card shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title mb-4">Enter Your Health Metrics</h5>
+            <div class="col-lg-6 animate-in delay-1">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body p-4">
+                        <h5 class="card-title mb-4"><i class="fas fa-clipboard-list me-2 text-primary"></i>Enter Your Health Metrics</h5>
                         <form method="POST" action="/predict">
                             <div class="row">
                                 {% for feature in feature_names %}
                                 <div class="col-md-6 mb-3">
                                     <label for="{{ feature }}" class="form-label">{{ feature }}</label>
                                     <input type="number" step="0.01" class="form-control" id="{{ feature }}" name="{{ feature }}" required>
+                                    <div class="form-text small text-muted">
+                                        {% if feature == 'Glucose' %}
+                                        Normal range: 70-140 mg/dL
+                                        {% elif feature == 'BloodPressure' %}
+                                        Normal range: 90-120 mmHg
+                                        {% elif feature == 'BMI' %}
+                                        Normal range: 18.5-24.9
+                                        {% elif feature == 'Age' %}
+                                        Enter your current age
+                                        {% endif %}
+                                    </div>
                                 </div>
                                 {% endfor %}
                             </div>
-                            <button type="submit" class="btn btn-primary w-100 mt-3">Predict</button>
+                            <button type="submit" class="btn btn-primary w-100 mt-4">
+                                <i class="fas fa-stethoscope me-2"></i>Get Your Prediction
+                            </button>
                         </form>
                     </div>
                 </div>
             </div>
 
-            <div class="col-lg-6">
+            <div class="col-lg-6 animate-in delay-2">
                 {% if result %}
                 <div class="prediction-card">
                     <div class="prediction-header {{ 'positive' if result.prediction == 'Positive' else 'negative' }}">
-                        <h4 class="mb-0">Prediction: {{ result.prediction }}</h4>
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-{{ 'exclamation-circle' if result.prediction == 'Positive' else 'check-circle' }} me-3" style="font-size: 2rem;"></i>
+                            <div>
+                                <h4 class="mb-0">Prediction: {{ result.prediction }}</h4>
+                                <p class="mb-0 mt-1 opacity-75">{{ 'Diabetes risk detected' if result.prediction == 'Positive' else 'No diabetes risk detected' }}</p>
+                            </div>
+                        </div>
                     </div>
                     <div class="prediction-body">
-                        <p>Probability of diabetes: {{ result.probability }}%</p>
+                        <h6 class="mb-3">Probability of diabetes:</h6>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span>Low Risk</span>
+                            <span class="fw-bold">{{ result.probability }}%</span>
+                            <span>High Risk</span>
+                        </div>
                         <div class="probability-bar">
-                            <div class="probability-value" style="width: {{ result.probability }}%;"></div>
+                            <div class="probability-value" style="width: {{ result.probability }}%"></div>
                         </div>
                         
                         <div class="mt-4">
-                            <h5>Risk Assessment</h5>
+                            <h5 class="mb-3">Risk Assessment</h5>
                             {% if result.probability < 30 %}
-                            <div class="alert alert-success">
-                                <strong>Low Risk.</strong> Your diabetes risk appears to be low. 
-                                Continue maintaining a healthy lifestyle.
+                            <div class="risk-badge risk-low">
+                                <i class="fas fa-shield-alt me-2"></i>Low Risk
                             </div>
+                            <p>
+                                The model predicts a low probability of diabetes. Continue maintaining a healthy lifestyle with regular exercise and balanced diet.
+                            </p>
                             {% elif result.probability < 70 %}
-                            <div class="alert alert-warning">
-                                <strong>Moderate Risk.</strong> You have some risk factors for diabetes. 
-                                Consider consulting with a healthcare professional.
+                            <div class="risk-badge risk-medium">
+                                <i class="fas fa-exclamation-triangle me-2"></i>Medium Risk
                             </div>
+                            <p>
+                                There is a moderate risk of diabetes. Consider consulting a healthcare professional and making lifestyle adjustments to reduce your risk factors.
+                            </p>
                             {% else %}
-                            <div class="alert alert-danger">
-                                <strong>High Risk.</strong> Your risk factors suggest a high probability of diabetes. 
-                                Please consult with a healthcare professional as soon as possible.
+                            <div class="risk-badge risk-high">
+                                <i class="fas fa-exclamation-circle me-2"></i>High Risk
                             </div>
+                            <p>
+                                The model indicates a high risk of diabetes. It is strongly recommended to consult a healthcare professional for proper evaluation and guidance.
+                            </p>
                             {% endif %}
                         </div>
                         
                         <div class="mt-4">
-                            <h5>Your Input Values</h5>
-                            <table class="table table-sm">
-                                <tbody>
-                                    {% for feature, value in result.features.items() %}
-                                    <tr>
-                                        <td>{{ feature }}</td>
-                                        <td class="text-end">{{ value }}</td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
+                            <h5 class="mb-3">Your Input Values</h5>
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Metric</th>
+                                            <th class="text-end">Value</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for feature, value in result.features.items() %}
+                                        <tr>
+                                            <td>{{ feature }}</td>
+                                            <td class="text-end fw-medium">{{ value }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                         
-                        <div class="mt-4">
-                            <a href="/report" class="btn btn-outline-primary">View Reports</a>
-                            <button type="button" class="btn btn-outline-secondary ms-2" onclick="window.print()">Print Results</button>
+                        <div class="d-flex gap-3 mt-4">
+                            <button type="button" class="btn btn-primary" onclick="window.print()">
+                                <i class="fas fa-print me-2"></i>Print Results
+                            </button>
+                            <a href="/predict" class="btn btn-outline-secondary">
+                                <i class="fas fa-redo me-2"></i>New Prediction
+                            </a>
                         </div>
                     </div>
                 </div>
                 {% else %}
                 <div class="card shadow-sm h-100">
-                    <div class="card-body d-flex flex-column justify-content-center align-items-center" style="min-height: 300px;">
+                    <div class="card-body d-flex flex-column justify-content-center align-items-center p-5">
+                        <div class="text-center mb-4">
+                            <i class="fas fa-clipboard-check text-primary" style="font-size: 4rem; opacity: 0.2;"></i>
+                        </div>
                         <h5 class="text-muted mb-3">No prediction yet</h5>
-                        <p class="text-center">Enter your health metrics to get a diabetes risk assessment.</p>
+                        <p class="text-center">Enter your health metrics to get a personalized diabetes risk assessment.</p>
+                        <p class="text-center small text-muted mt-3">Your data is processed securely and not stored on our servers.</p>
                     </div>
                 </div>
                 {% endif %}
             </div>
         </div>
         
-        <div class="row mt-5">
+        <div class="row mt-5 animate-in delay-3">
             <div class="col-12">
                 <div class="card shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title">About the Prediction Model</h5>
-                        <p>This prediction system uses a Random Forest model trained on diabetes data with the following performance metrics:</p>
-                        <ul>
-                            <li><strong>Accuracy:</strong> 74.03%</li>
-                            <li><strong>ROC AUC Score:</strong> 81.96%</li>
-                        </ul>
-                        <p class="text-muted"><small>Note: This tool is for informational purposes only and does not substitute professional medical advice. Always consult with a healthcare provider regarding medical conditions.</small></p>
+                    <div class="card-body p-4">
+                        <h5 class="card-title mb-4"><i class="fas fa-brain me-2 text-primary"></i>About the Prediction Model</h5>
+                        <div class="row">
+                            <div class="col-md-8">
+                                <p>This prediction system uses a Random Forest model trained on diabetes data. The model analyzes multiple health metrics to assess your diabetes risk with high accuracy.</p>
+                                <div class="d-flex flex-wrap gap-4 mt-4">
+                                    <div>
+                                        <h6 class="mb-2">Accuracy</h6>
+                                        <div class="d-flex align-items-center">
+                                            <div class="progress" style="width: 100px; height: 8px;">
+                                                <div class="progress-bar bg-primary" role="progressbar" style="width: 80%" aria-valuenow="74" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                            <span class="ms-3 fw-bold">80%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mt-4 mt-md-0">
+                                <div class="alert alert-light border-start border-4 border-primary" style="border-radius: 10px;">
+                                    <h6 class="mb-2"><i class="fas fa-info-circle me-2"></i>Medical Disclaimer</h6>
+                                    <p class="small mb-0">This tool is for informational purposes only and does not substitute professional medical advice. Always consult with a healthcare provider regarding medical conditions.</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -189,5 +586,50 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Add scroll animation for navbar
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+                navbar.classList.add('shadow');
+                navbar.style.padding = '10px 0';
+            } else {
+                navbar.classList.remove('scrolled');
+                navbar.classList.remove('shadow');
+                navbar.style.padding = '15px 0';
+            }
+        });
+        
+        // Add animation to probability bar
+        document.addEventListener('DOMContentLoaded', function() {
+            const probabilityBar = document.querySelector('.probability-value');
+            if (probabilityBar) {
+                setTimeout(() => {
+                    probabilityBar.style.width = probabilityBar.getAttribute('style').split(':')[1];
+                }, 300);
+            }
+            
+            // Add animation to elements when they come into view
+            const animatedElements = document.querySelectorAll('.animate__animated');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.visibility = 'visible';
+                        entry.target.classList.add('animate__fadeIn');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            animatedElements.forEach(element => {
+                if (!element.classList.contains('animate__infinite')) {
+                    element.style.visibility = 'hidden';
+                    observer.observe(element);
+                }
+            });
+        });
+    </script>
 </body>
 </html>
