@@ -1,107 +1,137 @@
-# Diabetes Prediction KNN Model and Web App
+# Diabetes Prediction System
 
-![Diabetes Prediction Model](https://github.com/amangupta143/Diabetes-Prediction-KNN/assets/109453339/69e89fbf-683f-461d-8198-9ee2f04c7ab2)
+![Diabetes Prediction System](./static/readme-img.jpeg)
 
-This repository provides a K-Nearest Neighbors (KNN) model `trained_model.sav` for diabetes prediction using patient data, along with a Streamlit web application `Diabetes_Prediction_Web_App.py` for interactive risk assessment.
+A machine learning-powered web application that predicts diabetes risk based on health metrics with high accuracy.
 
-## Table of Contents
-- Objective
-- Data
-- Features
-- Model
-- Benefits
-- Getting Started (Jupyter Notebook)
-- Using the Web App
-- Contributing
-- Licence
+## Overview
 
-## Objective
-This repository aims to:
-
-- Develop a KNN model to predict diabetes based on patient data.
-- Provide a clear and well-structured approach to data exploration, cleaning, preprocessing, model selection, and evaluation using a Jupyter Notebook.
-- Serve as a learning resource for anyone interested in KNN for diabetes prediction and machine learning for healthcare applications.
-
-
-## Data
-The project utilizes publicly available product and store data, accessible on Kaggle: <a href="https://www.kaggle.com/datasets/uciml/pima-indians-diabetes-database" >Pima Indians Diabetes Database</a>.
-
-The datasets consists of several medical predictor variables and one target variable, `Outcome`. Predictor variables includes the number of pregnancies the patient has had, their BMI, insulin level, age, and so on.
-
-
+This project uses advanced machine learning techniques to predict the likelihood of diabetes based on various health parameters. The system provides an intuitive web interface for users to input their health data and receive instant risk assessments.
 
 ## Features
 
-- **Pregnancies :** Number of times a woman has been pregnant
-- **Glucose :** Plasma Glucose concentration of 2 hours in an oral glucose tolerance test
-- **BloodPressure :** Diastollic Blood Pressure (mm hg)
-- **SkinThickness :** Triceps skin fold thickness(mm)
-- **Insulin :** 2 hour serum insulin(mu U/ml)
-- **BMI :** Body Mass Index ((weight in kg/height in m)^2)
-- **Age :** Age(years)
-- **DiabetesPedigreeFunction :** scores likelihood of diabetes based on family history)
-- **Outcome :** 0(doesn't have diabetes) or 1 (has diabetes)
+- **High Accuracy Prediction**: Utilizes a Random Forest model with 80% accuracy
+- **User-Friendly Interface**: Clean, responsive design for easy data input
+- **Instant Risk Assessment**: Get immediate results with probability scores
+- **Detailed Insights**: Personalized recommendations based on risk level
+- **Mobile Responsive**: Access the tool from any device
 
+## Screenshots
 
-## Model
+### Home Page
+![Home Page](./static/home-page.png)
 
-This repository focuses on building and evaluating a KNN model. KNN classifies data points based on their similarity (distance) to labeled data points in the training set. The model considers the "k" nearest neighbors of a new data point (patient) and predicts the class (diabetic or non-diabetic) based on the majority vote of those neighbors.
+### Prediction Page
+![Prediction Page](./static/prediction-page.png)
 
+## Technology Stack
 
-## Benefits
+- **Backend**: Flask, Python
+- **Machine Learning**: Scikit-learn, XGBoost, Pandas, NumPy
+- **Frontend**: HTML, CSS, Bootstrap 5, JavaScript
+- **Data Processing**: Advanced preprocessing with KNN Imputation, SMOTE for class imbalance
 
-This diabetes prediction model offers several advantages:
+## Model Information
 
-- **Early Detection:** Identify people at high risk for diabetes, enabling earlier intervention.
-- **Improved Management:** Help healthcare professionals tailor treatment plans based on risk.
-- **Reduced Costs:** Early detection can potentially lower healthcare costs associated with diabetes.
-- **Increased Awareness:** Raise awareness about diabetes risk factors and encourage healthier habits.
+The system uses a Random Forest classifier that was selected after comparing multiple models:
 
-These models are not meant for sole diagnosis but can be a valuable tool for risk assessment.
+| Model | ROC AUC | Accuracy |
+|-------|---------|----------|
+| RandomForest | 0.834 | 0.747 |
+| XGBoost | 0.811 | 0.773 |
+| SVM | 0.807 | 0.727 |
+| LogisticRegression | 0.798 | 0.708 |
 
+The model incorporates feature engineering techniques including:
+- BMI categorization
+- Age grouping
+- Glucose level categorization
+- Interaction features (BMI × Age, Glucose × Insulin)
+- Log transformations for skewed features
 
-## Getting Started (Jupyter Notebook)
+## Dataset
+
+The project uses the Pima Indians Diabetes Database from Kaggle, which includes several medical predictor variables and one target variable, `Outcome`. Predictor variables include:
+
+- Pregnancies
+- Glucose levels
+- Blood pressure
+- Skin thickness
+- Insulin
+- BMI
+- Diabetes pedigree function
+- Age
+
+## Getting Started
+
+### Prerequisites
+- Python 3.8+
+- pip package manager
+
+### Installation
+
 1. Clone this repository:
    ```bash
-   git clone https://github.com/amangupta143/Diabetes-Prediction-KNN.git
-3. Install required dependencies:
-   ```bash
-   pip install pandas numpy matplotlib seaborn scikit-learn
-5. Run the analysis script:
-   ```bash
-   jupyter notebook Diabetes-Prediction-Model.ipynb
+   git clone https://github.com/amangupta143/Diabetes-Prediction-System.git
+   cd Diabetes-Prediction-System
+   ```
 
-**Running the Notebook**
-
-- Open a terminal or command prompt and navigate to the directory containing the notebook and the "diabetes.csv" file.
-- Start Jupyter Notebook: `jupyter notebook`
-- In the Jupyter Notebook interface, open the Diabetes-Prediction-Model.ipynb file.
-- Run each code cell (block of code) by pressing `Shift + Enter`. The output of the code will be displayed below the cell.
-
-## Using the Web App:
-This project also includes a web application built with Streamlit.  Here's how to use it:
-1. Ensure you have `Python` and `Streamlit` installed.
-2. Open a terminal or command prompt and navigate to the project directory.
-3. Run the web application:
+2. Install required dependencies:
    ```bash
-   streamlit run Diabetes_Prediction_Web_App.py
-4. A web interface will open in your default browser, allowing you to enter patient data and receive a diabetes risk prediction.
+   pip install -r requirements.txt
+   ```
+
+3. Run the Flask application:
+   ```bash
+   python app.py
+   ```
+
+4. Open your browser and navigate to:
+   ```
+   http://localhost:5000
+   ```
+
+## How It Works
+
+1. **Input Your Health Data**: Enter basic health metrics like glucose levels, blood pressure, BMI, and more.
+2. **AI Analysis**: Our machine learning model processes your data and calculates your diabetes risk.
+3. **Get Your Results**: Receive an instant assessment with a detailed breakdown of your risk factors.
+
+## Model Training
+
+If you want to retrain the model with new data or different parameters:
+
+```bash
+python model-trainer.py
+```
+
+This script handles:
+- Data cleaning and preprocessing
+- Feature engineering
+- Model selection and hyperparameter tuning
+- Model evaluation and comparison
+- Saving the best model for the web application
 
 ## Contributing
 
-I welcome contributions to this repository! If you have ideas for improvement, bug fixes, or want to explore different aspects of the model, feel free to create a pull request.
+Contributions are welcome! If you have ideas for improvement, bug fixes, or want to explore different aspects of the model, feel free to:
 
-## Licence
-This project is licensed under the MIT License.
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
+## License
 
-<!--- Animated Line: --->
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+---
 
 <img src="https://i.imgur.com/dBaSKWF.gif" height="20" width="100%">
 
-Happy coding! 🚀
+Made with ❤️ by [Aman Gupta](https://github.com/amangupta143)
 
-<!-- Footer Links -->
-[![Portfolio](https://img.shields.io/badge/-Portfolio-red?style=flat&logo=appveyor&logoColor=white)](https://github.com/amangupta143)
+[![Portfolio](https://img.shields.io/badge/-Portfolio-red?style=flat&logo=appveyor&logoColor=white)](https://amangupta.me)
 [![Github](https://img.shields.io/badge/-Github-000?style=flat&logo=Github&logoColor=white)](https://github.com/amangupta143)
 [![Linkedin](https://img.shields.io/badge/-LinkedIn-blue?style=flat&logo=Linkedin&logoColor=white)](https://www.linkedin.com/in/amangupta143/)
